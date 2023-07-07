@@ -1,0 +1,9 @@
+.vscode
+*.egg-info
+artifact
+logs
+.env
+data
+saved_models
+
+*__pycache__/*

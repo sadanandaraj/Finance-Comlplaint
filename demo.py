@@ -1,39 +1,52 @@
-#necessary libraries of pyspark
-from pyspark.sql import SparkSession
-from pyspark.sql.types import StructType,StructField, StringType, IntegerType
+from pymongo import MongoClient
 
+mongodb_url = "mongodb+srv://sadanandaraj52:sadanandaraj@cluster0.af4n9i3.mongodb.net/?retryWrites=true&w=majority"
+client = MongoClient(mongodb_url)
+db = client["finance_artifact263"]
+collection_name = "evaluation"
 
-if __name__ == '__main__':
-    #Creating spark session
-    spark = SparkSession.builder.appName("demo").getOrCreate()
+print("------------------------------------------------------------------------------------------------")
 
-    #Create list of data to prepare data frame
-    person_list = [("Berry","","Allen",1,"M"),
-        ("Oliver","Queen","",2,"M"),
-        ("Robert","","Williams",3,"M"),
-        ("Tony","","Stark",4,"F"),
-        ("Rajiv","Mary","Kumar",5,"F")
-    ]
-    
+class ModelEvaluationArtifact:
+    def __init__(self, model_name, evaluation_result):
+        self.model_name = model_name
+        self.evaluation_result = evaluation_result
 
-    #defining schema for dataset
-    schema = StructType([ \
-        StructField("firstname",StringType(),True), \
-        StructField("middlename",StringType(),True), \
-        StructField("lastname",StringType(),True), \
-        StructField("id", IntegerType(), True), \
-        StructField("gender", StringType(), True), \
-      
-    ])
-    
-    #creating spark dataframe
-    df = spark.createDataFrame(data=person_list,schema=schema)
+    def to_dict(self):
+        return {
+            "model_name": self.model_name,
+            "evaluation_result": self.evaluation_result
+        }
 
-    #Printing data frame schema
-    df.printSchema()
+class ModelEvaluationArtifactData:
+    def __init__(self):
+        try:
+            self.client = client
+            self.db = db
+            self.collection = self.db[collection_name]
+        except Exception as e:
+            print(e)
 
-    #Printing data
-    df.show(truncate=False)
+    def save_eval_artifact(self, model_eval_artifact):
+        self.collection.insert_one(model_eval_artifact.to_dict())
+        print("Artifact saved successfully.")
 
-    #Writing file in spark context
-    df.write.csv("record.csv")
+    def get_eval_artifact(self, query):
+        artifact = self.collection.find_one(query)
+        if artifact:
+            print("Artifact found:")
+            print(artifact)
+        else:
+            print("Artifact not found.")
+
+# Create the collection if it does not exist
+if collection_name not in db.list_collection_names():
+    db.create_collection(collection_name)
+    print(f"Collection '{collection_name}' created.")
+
+# Usage example:
+data = ModelEvaluationArtifactData()
+artifact = ModelEvaluationArtifact("Model1", 0.85)
+data.save_eval_artifact(artifact)
+data.get_eval_artifact({"model_name": "Model1"})
+
