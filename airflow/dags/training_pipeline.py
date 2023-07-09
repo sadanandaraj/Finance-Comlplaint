@@ -23,7 +23,7 @@ from __future__ import annotations
 from finance_complaint.pipeline.training import TrainingPipeline
 from finance_complaint.entity.config_entity import TrainingPipelineConfig
 # [START tutorial]
-# [START import_module]////
+# [START import_module]
 import json
 from textwrap import dedent
 
