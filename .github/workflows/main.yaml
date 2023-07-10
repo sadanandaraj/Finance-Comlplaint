@@ -63,6 +63,12 @@ jobs:
   - name: Login to Amazon ECR
     id: login-ecr
     uses: aws-actions/amazon-ecr-login@v1
+    with:
+      registry: ${{ secrets.ECR_REGISTRY }}
+      registry-url: ${{ secrets.ECR_REGISTRY_URL }}
+      aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      aws-region: ${{ secrets.AWS_REGION }}
   - name: Pull docker image
     run: |
       docker pull ${{secrets.AWS_ECR_LOGIN_URI}}/${{ secrets.ECR_REPOSITORY_NAME }}:latest
