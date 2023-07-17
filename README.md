@@ -2,7 +2,7 @@
 
 This repository contains a machine learning classification model built for predicting whether a person will file a complaint in the finance domain in the United States. The model is built using PySpark, a Python library for distributed data processing, and leverages an API to make predictions based on input data. The project also incorporates MLOps (Machine Learning Operations) practices to streamline the development, deployment, and management of the machine learning model  .
 
-## Table of Contents :
+## Table of Contents
 
 - [Introduction](#introduction)
 - [Prerequisites](#prerequisites)
